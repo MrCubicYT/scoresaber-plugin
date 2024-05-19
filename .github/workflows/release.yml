@@ -1,51 +1,60 @@
-name: Build
+name: Build #action name
 
-on:
-   workflow_dispatch:
+on: #when it runs
+   push: #changed to push cause im just cool like that 😎
 
-jobs:
-  Build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+jobs: #shit to do buckeroo
+  Build: #job named build
+    runs-on: ubuntu-latest #this job runs on ubuntu, duh
+    steps: #steps we have to do for this job
+    - name: Checkout code #checkout code
+      uses: actions/checkout@v4 #action to copy this repository to build enviroment
+
+      #i shall add linting here
       
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
+    - name: Setup dotnet #setup .Net framework, the language this repository based on
+      uses: actions/setup-dotnet@v1 #action to setup .Net
+      with: #with version
+        dotnet-version: 6.0.x #6.0.(latest)
       
-    - name: Read manifest and set game version
-      id: read-json
-      run: |
+    - name: Read manifest and set game version #read manifest which has a bunch of info in
+      id: read-json #gives this step an id so others can pull info from it
+      run: | #runs some shell or whatever its called
         json_content=$(cat ${{github.workspace}}/ScoreSaber/manifest.json)
         game_version=$(echo "$json_content" | jq -r .gameVersion)
         echo "Game Version: $game_version"
-        echo "::set-output name=game_version::$game_version"  
+        echo "::set-output name=game_version::$game_version"
+
+    #sets json_content to manifest file from repository using cat
+    #sets game_version to "gameVersion" from manifest by reading the entire file with echo and filtering for the variable gameVersion with jq
+    #sends log of game version
+    #sets an output of this step called game_version which can be pulled from "steps.read-json.output.game_version"
+    #MAY CHANGE LAST STEP TO ENVIROMENT FILES
         
-    - name: Checkout stripped dlls
-      uses: actions/checkout@v4
-      with:
-        repository: ScoreSaber/scoresaber-pc-ci-stripped
-        token: ${{ secrets.CI_PAT }}
-        path: Stripped
-        sparse-checkout: |
+    - name: Checkout stripped dlls #checkout some dlls, probably beat saber ones or other mods
+      uses: actions/checkout@v4 #action to copy over a repository
+      with: #from the repository
+        repository: ScoreSaber/scoresaber-pc-ci-stripped #spooky secret repository, Is it scoresaber without actions?
+        token: ${{ secrets.CI_PAT }} #secret token to access repository
+        path: Stripped #puts the repository in a folder called stripped I think?
+        sparse-checkout: | #gets files you want to include
           Versions/${{ steps.read-json.outputs.game_version }}
-        sparse-checkout-cone-mode: false
+        #in the repository it goes to Versions/game_version and pulls it
+        sparse-checkout-cone-mode: false #something to do with getting the files that is enabled by default but is set to false
      
-    - name: Move stripped dlls to refs
-      run: mv Stripped/Versions/${{ steps.read-json.outputs.game_version }} Refs
+    - name: Move stripped dlls to refs #move checkouted dll's using bash (or whatever the fuck is called)
+      run: mv Stripped/Versions/${{ steps.read-json.outputs.game_version }} Refs #moves the folder from \Stripped\Versions\game_version to \Refs\game_version
     
-    - name: Acquire mod references
-      uses: Goobwabber/download-beatmods-deps@1.2
-      with:
-        manifest: ${{github.workspace}}/ScoreSaber/manifest.json
+    - name: Acquire mod references #gets mods for scoresaber to reference when building
+      uses: Goobwabber/download-beatmods-deps@1.2 #the ability to download mods from https://beatmods.com/ when building
+      with: #use with the mods
+        manifest: ${{github.workspace}}/ScoreSaber/manifest.json #gets the mods frome the holy manifest 😇, gets BSIPA, BeatSaberMarkupLanguage, SiraUtil and SongCore
         
-    - name: Build
-      id: Build
-      env:
-        FrameworkPathOverride: /usr/lib/mono/4.8-api
-      run: dotnet build --configuration Release
+    - name: Build #actually constructing the mod yooooooooooooo
+      id: Build #id, so steps can reffer to this
+      env: #This section sets environment variables for the step
+        FrameworkPathOverride: /usr/lib/mono/4.8-api #this tells .Net to build with mono located here
+      run: dotnet build --configuration Release #actuall build command
       
     - name: Git Status
       run: git status
