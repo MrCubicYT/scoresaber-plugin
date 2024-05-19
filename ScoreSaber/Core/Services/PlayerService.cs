@@ -13,44 +13,44 @@ using UnityEngine;
 namespace ScoreSaber.Core.Services {
     internal class PlayerService {
 
-        public LocalPlayerInfo localPlayerInfo { get; set; }
-        public LoginStatus loginStatus { get; set; }
-        public event Action<LoginStatus, string> LoginStatusChanged;
+        public LocalPlayerInfo localPlayerInfo { get; set; } //localPlayerInfo get/set method which needs (String _playerId, String _playerName, String _playerFriends, String _authtype, String _playerNonce)
+        public LoginStatus loginStatus { get; set; } //loginStatus get/set method which needs (LoginStatus _loginstatus) which would be something like (LoginStatus.Error) cause you are getting the value from the enum defined 2 lines below
+        public event Action<LoginStatus, string> LoginStatusChanged; //define event LoginStatusChanged, delegate also defined that takes LoginStatus Enum and String that passes its info to the event I guess?
         public enum LoginStatus {
             Info = 0,
             Error = 1,
             Success = 2
-        }
+        } //defining enum, for example if enum is 2 login was a succes
 
         public PlayerService() {
-            Plugin.Log.Debug("PlayerService Setup!");
+            Plugin.Log.Debug("PlayerService Setup!"); //log setup of this
         }
 
         public void ChangeLoginStatus(LoginStatus _loginStatus, string status) {
 
-            loginStatus = _loginStatus;
-            LoginStatusChanged?.Invoke(loginStatus, status);
+            loginStatus = _loginStatus; //set the loginStatus variable to func variable which would be LoginStatus enum (like LoginStatus.Error)
+            LoginStatusChanged?.Invoke(loginStatus, status); //Fire LoginStatusChanged event (line 18) after checking null (?.) and send LoginStatus enum (like LoginStatus.Error) and description of error string
         }
 
         public void GetLocalPlayerInfo() {
 
-            if (localPlayerInfo == null) {
-                if (File.Exists(Path.Combine(IPA.Utilities.UnityGame.InstallPath, "Beat Saber_Data", "Plugins", "x86_64", "steam_api64.dll"))) {
-                    GetLocalPlayerInfo1().RunTask();
-                } else {
-                    GetLocalPlayerInfo2();
+            if (localPlayerInfo == null) { //check if localPlayerInfo variable null
+                if (File.Exists(Path.Combine(IPA.Utilities.UnityGame.InstallPath, "Beat Saber_Data", "Plugins", "x86_64", "steam_api64.dll"))) {  //if steam api exsits then use auth 1, gets install path from IPA
+                    GetLocalPlayerInfo1().RunTask(); //auth with steam (line 46)
+                } else { //else no steam api
+                    GetLocalPlayerInfo2(); //auth with oculus (line 81)
                 }
-            }
+            } //else do nothing
         }
 
         private async Task GetLocalPlayerInfo1() {
 
-            ChangeLoginStatus(LoginStatus.Info, "Signing into ScoreSaber...");
+            ChangeLoginStatus(LoginStatus.Info, "Signing into ScoreSaber..."); //changes login status (line 29)
 
-            int attempts = 1;
+            int attempts = 1; //sets variable attempts to 1
 
-            while (attempts < 4) {
-                LocalPlayerInfo steamInfo = await GetLocalSteamInfo();
+            while (attempts < 4) { //try 3 times cause counter "attempts will increase"
+                LocalPlayerInfo steamInfo = await GetLocalSteamInfo(); //new LocalPlayerInfo variable set to what GetLocalSteamInfo (line 120) returns
                 if (steamInfo != null) {
                     bool authenticated = await AuthenticateWithScoreSaber(steamInfo);
                     if (authenticated) {
@@ -63,8 +63,8 @@ namespace ScoreSaber.Core.Services {
                         break;
                     } else {
                         ChangeLoginStatus(LoginStatus.Error, $"Failed, attempting again ({attempts} of 3 tries...)");
-                        attempts++;
-                        await Task.Delay(4000);
+                        attempts++; //attempts increase
+                        await Task.Delay(4000); //delay to look cool and probably wait for internet
                     }
                 } else {
                     Plugin.Log.Error("Steamworks is not initialized!");
@@ -119,9 +119,9 @@ namespace ScoreSaber.Core.Services {
 
         private async Task<LocalPlayerInfo> GetLocalSteamInfo() {
 
-            await TaskEx.WaitUntil(() => SteamManager.Initialized);
+            await TaskEx.WaitUntil(() => SteamManager.Initialized);  //wait untill steamManager gets initilised
 
-            string authToken = (await new SteamPlatformUserModel().GetUserAuthToken()).token;
+            string authToken = (await new SteamPlatformUserModel().GetUserAuthToken()).token;  //set authToken to 
 
             LocalPlayerInfo steamInfo = await Task.Run(() => {
                 Steamworks.CSteamID steamID = Steamworks.SteamUser.GetSteamID();
