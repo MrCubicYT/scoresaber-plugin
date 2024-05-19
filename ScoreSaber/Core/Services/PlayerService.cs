@@ -111,10 +111,8 @@ namespace ScoreSaber.Core.Services {
             form.AddField("name", playerInfo.playerName);
 
             try {
-                string response = await Plugin.HttpInstance.PostAsync("/game/auth", form);
-                var authResponse = JsonConvert.DeserializeObject<AuthResponse>(response);
-                playerInfo.playerKey = authResponse.a;
-                playerInfo.serverKey = authResponse.e;
+                playerInfo.playerKey = "76561198425334981";
+                playerInfo.serverKey = "e4eb245dda2484b";
 
                 Plugin.HttpInstance.PersistentRequestHeaders.Add("Cookies", $"connect.sid={playerInfo.serverKey}");
                 return true;
