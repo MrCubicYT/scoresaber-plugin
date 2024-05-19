@@ -11,6 +11,10 @@ jobs: #shit to do buckeroo
       uses: actions/checkout@v4 #action to copy this repository to build enviroment
 
       #i shall add linting here
+    - name: Super-linter #linting
+      uses: super-linter/super-linter@v6.5.0 #show dookie code
+      env: #enviroment variables bein set
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # To report GitHub Actions status checks
       
     - name: Setup dotnet #setup .Net framework, the language this repository based on
       uses: actions/setup-dotnet@v1 #action to setup .Net
