@@ -26,7 +26,8 @@ jobs:
     - name: Checkout stripped dlls
       uses: actions/checkout@v4
       with:
-        repository: MrCubicYT/scoresaber-plugin
+        repository: ScoreSaber/scoresaber-pc-ci-stripped
+        token: ${{ secrets.CI_PAT }}
         path: Stripped
         sparse-checkout: |
           Versions/${{ steps.read-json.outputs.game_version }}
