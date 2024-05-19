@@ -38,7 +38,7 @@ jobs: #shit to do buckeroo
     - name: Checkout stripped dlls #checkout some dlls, probably beat saber ones or other mods
       uses: actions/checkout@v4 #action to copy over a repository
       with: #from the repository
-        repository: ScoreSaber/scoresaber-pc-ci-stripped #spooky secret repository, Is it scoresaber without actions?
+        repository: MrCubicYT/BSRefs #spooky secret repository, Is it scoresaber without actions?
         token: ${{ secrets.CI_PAT }} #secret token to access repository
         path: Stripped #puts the repository in a folder called stripped I think?
         sparse-checkout: | #gets files you want to include
