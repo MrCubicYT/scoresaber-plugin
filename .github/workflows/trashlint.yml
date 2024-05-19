@@ -1,0 +1,16 @@
+name: TrashLint #action name
+
+on: #when it runs
+  workflow_dispatch: #this means you just trigger it with a button
+
+jobs: #shit to do buckeroo
+  Lint: #job named build
+    runs-on: ubuntu-latest #this job runs on ubuntu, duh
+    steps: #steps we have to do for this job
+    - name: Checkout code #checkout code
+      uses: actions/checkout@v4 #action to copy this repository to build enviroment
+      
+    - name: Super-linter #linting
+      uses: super-linter/super-linter@v6.5.0 #show dookie code
+      env: #enviroment variables bein set
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # To report GitHub Actions status checks
