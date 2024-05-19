@@ -56,17 +56,17 @@ jobs: #shit to do buckeroo
         FrameworkPathOverride: /usr/lib/mono/4.8-api #this tells .Net to build with mono located here
       run: dotnet build --configuration Release #actuall build command
       
-    - name: Git Status
-      run: git status
+    - name: Git Status #info step
+      run: git status #print info for troubleshooting and debug
       
-    - name: Echo file name
-      run: echo $BUILDTEXT \($ASSEMBLYNAME\)
-      env:
-        BUILDTEXT: Filename=${{ steps.Build.outputs.filename }}
-        ASSEMBLYNAME: AssemblyName=${{ steps.Build.outputs.assemblyname }}
+    - name: Echo file name #more info echoed to user
+      run: echo $BUILDTEXT \($ASSEMBLYNAME\) #echo filename and assemblyname (tf is that ?)
+      env: #more enviroment variablies girlies yaassss 💅🏻
+        BUILDTEXT: Filename=${{ steps.Build.outputs.filename }} #sets BUILDTEXT to filename that the build outputs and is then used above
+        ASSEMBLYNAME: AssemblyName=${{ steps.Build.outputs.assemblyname }} #sets ASSEMBLYNAME to filename that the build outputs and is then used above
         
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: ${{ steps.Build.outputs.filename }}
-        path: ${{ steps.Build.outputs.artifactpath }}
+    - name: Upload artifact #upload finished file
+      uses: actions/upload-artifact@v1 #upload file action
+      with: #with the
+        name: ${{ steps.Build.outputs.filename }} #name that the build spat out
+        path: ${{ steps.Build.outputs.artifactpath }} #and the file that the build spat out
