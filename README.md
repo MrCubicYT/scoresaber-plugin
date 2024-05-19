@@ -1,5 +1,5 @@
 # ScoreSaber-Plugin
-i'm just too good at coding me 
+i'm just too good at coding, me 
 -cubic
 
 
