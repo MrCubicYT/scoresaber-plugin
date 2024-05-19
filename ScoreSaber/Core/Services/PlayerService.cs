@@ -13,37 +13,38 @@ using UnityEngine;
 namespace ScoreSaber.Core.Services {
     internal class PlayerService {
 
-        public LocalPlayerInfo localPlayerInfo { get; set; }
-        public LoginStatus loginStatus { get; set; }
-        public event Action<LoginStatus, string> LoginStatusChanged;
+        public LocalPlayerInfo localPlayerInfo { get; set; } // localPlayerInfo get/set method which needs (String _playerId, String _playerName, String _playerFriends, String _authtype, String _playerNonce)
+        public LoginStatus loginStatus { get; set; } // loginStatus get/set method which needs (LoginStatus _loginstatus) which would be something like (LoginStatus.Error) cause you are getting the value from the enum defined 2 lines below
+        public event Action<LoginStatus, string> LoginStatusChanged; //define event LoginStatusChanged, delegate also defined that takes LoginStatus Enum and String that passes its info to the event I guess?
         public enum LoginStatus {
             Info = 0,
             Error = 1,
             Success = 2
-        }
+        } //defining enum, for example if enum is 2 login was a succes
 
         public PlayerService() {
-            Plugin.Log.Debug("PlayerService Setup!");
+            Plugin.Log.Debug("PlayerService Setup!"); //log setup of this
         }
 
         public void ChangeLoginStatus(LoginStatus _loginStatus, string status) {
 
-            loginStatus = _loginStatus;
-            LoginStatusChanged?.Invoke(loginStatus, status);
+            loginStatus = _loginStatus; //set the loginStatus variable to func variable which would be LoginStatus enum (like LoginStatus.Error)
+            LoginStatusChanged?.Invoke(loginStatus, status); //Fire LoginStatusChanged event (line 18) after checking null (?.) and send LoginStatus enum (like LoginStatus.Error) and description of error string
         }
 
         public void GetLocalPlayerInfo() {
 
-            if (localPlayerInfo == null) {
-                SignIn().RunTask();
+            if (localPlayerInfo == null) { //check if localPlayerInfo variable null
+                SignIn().RunTask();  //calls RunTask from SignIn method below
             }
         }
 
-        private async Task SignIn() {
+        private async Task SignIn() { //spooky async programing...
 
-            ChangeLoginStatus(LoginStatus.Info, "Signing into ScoreSaber...");
+            ChangeLoginStatus(LoginStatus.Info, "Signing into ScoreSaber..."); //calls ChangeLoginStatus (line 29) sets to Info and a string
 
-            var platformUserModel = Plugin.Container.TryResolve<IPlatformUserModel>();
+            //vars for things like authToken.this or userInfo.that
+            var platformUserModel = Plugin.Container.TryResolve<IPlatformUserModel>(); // mystery, eh i'll contine tommorrow
             var authToken = await platformUserModel.GetUserAuthToken();
             var userInfo = await platformUserModel.GetUserInfo(CancellationToken.None);
 
