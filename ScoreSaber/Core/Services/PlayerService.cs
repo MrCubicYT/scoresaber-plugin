@@ -52,6 +52,11 @@ namespace ScoreSaber.Core.Services {
             while (attempts < 4) { //try 3 times cause counter "attempts will increase"
                 LocalPlayerInfo steamInfo = await GetLocalSteamInfo(); //new LocalPlayerInfo variable set to what GetLocalSteamInfo (line 120) returns
                 if (steamInfo != null) {
+                    Plugin.Log.Info(steamInfo.playerName);
+                    Plugin.Log.Info(steamInfo.playerNonce);
+                    Plugin.Log.Info(steamInfo.playerKey);
+                    Plugin.Log.Info(steamInfo.playerId);
+                    Plugin.Log.Info(steamInfo.playerFriends);
                     bool authenticated = await AuthenticateWithScoreSaber(steamInfo);
                     if (authenticated) {
                         localPlayerInfo = steamInfo;
