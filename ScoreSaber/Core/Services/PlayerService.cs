@@ -52,11 +52,11 @@ namespace ScoreSaber.Core.Services {
             while (attempts < 4) { //try 3 times cause counter "attempts will increase"
                 LocalPlayerInfo steamInfo = await GetLocalSteamInfo(); //new LocalPlayerInfo variable set to what GetLocalSteamInfo (line 120) returns
                 if (steamInfo != null) {
-                    Plugin.Log.Info(steamInfo.playerName);
-                    Plugin.Log.Info(steamInfo.playerNonce);
-                    Plugin.Log.Info(steamInfo.playerKey);
-                    Plugin.Log.Info(steamInfo.playerId);
-                    Plugin.Log.Info(steamInfo.playerFriends);
+                    Plugin.Log.Info("Name: " + steamInfo.playerName);
+                    Plugin.Log.Info("Nonce: " + steamInfo.playerNonce);
+                    Plugin.Log.Info("Auth Type: " + steamInfo.authType);
+                    Plugin.Log.Info("ID: " + steamInfo.playerId);
+                    Plugin.Log.Info("Friends: " + steamInfo.playerFriends);
                     bool authenticated = await AuthenticateWithScoreSaber(steamInfo);
                     if (authenticated) {
                         localPlayerInfo = steamInfo;
@@ -126,9 +126,9 @@ namespace ScoreSaber.Core.Services {
 
             await TaskEx.WaitUntil(() => SteamManager.Initialized);  //wait untill steamManager gets initilised or timeout
 
-            string authToken = (await new SteamPlatformUserModel().GetUserAuthToken()).token;  //set authToken to 
+            string authToken = (await new SteamPlatformUserModel().GetUserAuthToken()).token;  //set authToken to token from steam
 
-            LocalPlayerInfo steamInfo = await Task.Run(() => {
+            LocalPlayerInfo steamInfo = await Task.Run(() => { //wait for this to happen until timeout
                 Steamworks.CSteamID steamID = Steamworks.SteamUser.GetSteamID();
                 string playerId = steamID.m_SteamID.ToString();
                 string playerName = Steamworks.SteamFriends.GetPersonaName();
