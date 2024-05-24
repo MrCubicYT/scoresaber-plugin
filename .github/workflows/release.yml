@@ -1,7 +1,8 @@
 name: Build #action name
 
-on: #when it runs
-   push: #changed to push cause im just cool like that 😎
+on: [push, workflow_dispatch] #when workflow runs
+
+#changed to push and w_d cause im just cool like that 😎
 
 jobs: #shit to do buckeroo
   Build: #job named build
